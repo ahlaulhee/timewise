@@ -1,113 +1,181 @@
-import Image from 'next/image'
+import Link from "next/link";
+import { inter, quicksand, ubuntu, poppins, worksans } from "./fonts";
+import FeatureCard from "@/components/FeatureCard";
+import FeatureBox from "@/components/FeatureBox";
+import Image from "next/image";
+
+const FeatureCardsJSON = [
+  {
+    svg: "",
+    title: "Password Manager",
+    description:
+      "Say goodbye to weak passwords! Our Password Manager empowers you to create and store rock-solid passwords effortlessly. You have the freedom to define their length, and our intelligent algorithm generates unique passwords based on your email and master password, ensuring maximum security for your online accounts.",
+  },
+  {
+    svg: "",
+    title: "To-Do List",
+    description:
+      "Stay organized and in control with our Todo Lists feature. Easily store and manage your tasks, and watch your productivity soar. Track progress, set timers to measure task completion times, and filter tasks by state (ToDo, In Progress, Done). Streamline your workflow and accomplish more in less time.",
+  },
+  {
+    svg: "",
+    title: "Auth",
+    description:
+      "Protecting your data is our top priority. With our Third-Party Authentication Service, you'll enjoy peace of mind. Log in securely using your email and master password, and let us handle the rest. We employ state-of-the-art security measures to safeguard your credentials, ensuring your online experience is both convenient and secure.",
+  },
+];
+
+const FeatureBoxesJSON = [
+  {
+    feature: "User Inputs",
+    description:
+      "When you input your email and master password, our algorithm combines these two pieces of information in a secure manner.",
+  },
+  {
+    feature: "Customizable Length",
+    description:
+      "You have the flexibility to define the length of the generated password. This empowers you to create passwords that align with the specific requirements of the accounts you are securing.",
+  },
+  {
+    feature: "Hashing Process",
+    description:
+      "The combined email and master password are passed through a cryptographic hashing process. This process ensures that the generated password is not only unique but also secure.",
+  },
+  {
+    feature: "Local Storage",
+    description:
+      "Passwords are stored locally on your device. This means that your sensitive information never leaves your computer, reducing the risk of exposure.",
+  },
+  {
+    feature: "Encryption with bcrypt",
+    description:
+      "Before being stored, your passwords are encrypted using the bcrypt hashing algorithm. bcrypt is known for its robust security features, making it extremely difficult for malicious actors to gain access to your stored passwords.",
+  },
+  {
+    feature: "Export Functionality",
+    description:
+      "We value your data portability. That's why we provide an easy way for you to export your passwords. Whether you want to switch browsers, use your passwords on a different computer, or simply have a backup, our export feature has you covered.",
+  },
+];
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="max-w-screen-xl mx-auto space-y-10">
+      <section className="flex flex-row text-custom-white py-12">
+        {/* LEFT SIDE */}
+        <div className="p-4 flex flex-col justify-evenly w-1/2">
+          <h1
+            className={`${worksans.className} text-3xl font-bold tracking-wide`}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            TimeWise
+          </h1>
+          <h2 className={`${quicksand.className} text-4xl`}>
+            Unlock Peace of Mind: Secure Passwords, Organized Tasks!
+          </h2>
+          <div className="w-full flex justify-center">
+            <Link
+              href="/api/auth/signin"
+              className={`${ubuntu.className} border border-white px-20 py-4 rounded-lg tracking-wide hover:bg-white hover:text-black duration-200`}
+            >
+              TRY IT NOW!
+            </Link>
+          </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* RIGHT SIDE */}
+        <div className="w-1/2 flex justify-center items-center">
+          <img
+            className="h-[29rem] w-[27rem]"
+            src="https://lesolson.com/wp-content/uploads/2019/08/Asset-1strong-password.png"
+            alt="Hero Section Image"
+          />
+        </div>
+      </section>
+      <section className="flex flex-col bg-foreground rounded-lg px-8 py-12 space-y-10  ">
+        <h2
+          className={`${poppins.className} text-3xl pb-4 text-center text-main`}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          Features
+        </h2>
+        <div className="grid lg:grid-cols-3 lg:gap-x-12">
+          {FeatureCardsJSON.map((feat, index) => (
+            <FeatureCard
+              key={index}
+              svg={feat.svg}
+              title={feat.title}
+              description={feat.description}
+            />
+          ))}
+        </div>
+      </section>
+      <section className="text-custom-white space-y-2 py-12">
+        <h2 className={`${inter.className} text-3xl text-center`}>
+          How Does This Work?
+        </h2>
+        <div className={`${quicksand.className} p-4 text-justify space-y-3`}>
+          <div>
+            <p className="text-base indent-8 mx-10">
+              Our password generation algorithm is designed with both security
+              and convenience in mind. It takes two essential arguments: the
+              user&apos;s email and master password. This unique approach allows
+              users to generate the same password whenever needed, ensuring
+              consistency and eliminating the risk of losing access when a
+              password is deleted.
+            </p>
+            <p className="indent-8 mx-10">
+              We understand the critical importance of safeguarding your
+              passwords. Therefore, we take the following measures to ensure the
+              highest level of security for your stored passwords:
+            </p>
+          </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
+          <div className="grid gap-x-2 md:grid-cols-1 lg:grid-cols-2 xl:gap-x-12">
+            {FeatureBoxesJSON.map((feat, index) => (
+              <FeatureBox
+                key={index}
+                feature={feat.feature}
+                description={feat.description}
+              />
+            ))}
+          </div>
+          <p className="indent-8 mx-10">
+            By combining a unique and user-friendly password generation
+            algorithm with strong encryption and local storage, we aim to
+            provide you with a secure and convenient solution for managing and
+            protecting your online passwords. Your online security is our top
+            priority, and we continuously strive to maintain the highest
+            standards in password management.
           </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        </div>
+      </section>
+      <footer className="text-main bg-foreground rounded-t-lg px-4 py-12 flex flex-col justify-center items-center text-center space-y-6">
+        <h2 className={`${worksans.className} text-3xl`}>
+          This project was made possible by{" "}
+          <span className="font-bold text-custom-white uppercase tracking-wide">
+            ahlaulhe
+          </span>
+        </h2>
+        <h3 className={`${worksans.className} text-2xl`}>
+          YOU CAN FIND ME ON:
+        </h3>
+        <div className="flex justify-center space-x-12">
+          <Link href="https://www.linkedin.com/in/alex-laulhe/">
+            <Image
+              width={100}
+              height={100}
+              src="/github.png"
+              alt="LOGO GITHUB"
+            />
+          </Link>
+          <Link href="https://github.com/ahlaulhee">
+            <Image
+              width={100}
+              height={100}
+              src="/linkedin.png"
+              alt="LOGO LINKEDIN"
+            />
+          </Link>
+        </div>
+      </footer>
     </main>
-  )
+  );
 }
