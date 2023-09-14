@@ -1,4 +1,6 @@
+"use client";
 import { inter, worksans } from "@/app/fonts";
+import { motion } from "framer-motion";
 
 export default function FeatureCard({
   title,
@@ -10,7 +12,14 @@ export default function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="mb-12 lg:mb-0">
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      dragTransition={{ bounceStiffness: 500, bounceDamping: 10 }}
+      className="mb-12 lg:mb-0"
+    >
       <div className="block h-full rounded-lg bg-main shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ">
         <div className="flex justify-center">
           <div className="-mt-8 inline-block rounded-full bg-primary-100 p-4 text-primary shadow-md bg-custom-red">
@@ -39,6 +48,6 @@ export default function FeatureCard({
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import MotionWrapper from "@/components/MotionWrapper";
 
 export const metadata: Metadata = {
   title: "TimeWise",
@@ -16,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-main text-white">
         <Navbar />
-        {children}
+        <MotionWrapper>{children}</MotionWrapper>
       </body>
     </html>
   );
