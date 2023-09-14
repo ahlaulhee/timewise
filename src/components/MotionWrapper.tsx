@@ -9,14 +9,14 @@ export default function MotionWrapper({
   return (
     <>
       <AnimatePresence>
-        <motion.div
+        {/* <motion.div
           initial={{ y: 300, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -300, opacity: 0 }}
           transition={{ duration: 0.7, ease: "anticipate" }}
-        >
-          {children}
-        </motion.div>
+        > */}
+        {children}
+        {/* </motion.div> */}
       </AnimatePresence>
     </>
   );

@@ -16,18 +16,21 @@ export default function HeroSection() {
         <h2 className={`${quicksand.className} text-4xl`}>
           Unlock Peace of Mind: Secure Passwords, Organized Tasks!
         </h2>
-        <motion.button
-          whileHover={{ scale: 1.2 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-full flex justify-center"
-        >
-          <Link
-            href="/api/auth/signin"
-            className={`${ubuntu.className} border border-white px-20 py-4 rounded-lg tracking-wide hover:bg-white hover:text-black duration-200`}
+        <div className="w-full flex justify-center">
+          <motion.button
+            transition={{ type: "tween" }}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-1/2 flex justify-center"
           >
-            TRY IT NOW!
-          </Link>
-        </motion.button>
+            <Link
+              href="/api/auth/signin"
+              className={`${ubuntu.className} border rounded-lg border-white w-full py-4 tracking-wide hover:bg-white hover:text-black duration-200`}
+            >
+              TRY IT NOW!
+            </Link>
+          </motion.button>
+        </div>
       </div>
       {/* RIGHT SIDE */}
       <div className="w-1/2 flex justify-center items-center">
