@@ -11,7 +11,7 @@ export default function Home() {
       <motion.div
         initial={{ y: -300, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1.2 }}
+        transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
         <HeroSection />
@@ -19,13 +19,13 @@ export default function Home() {
       <motion.div
         initial={{ y: 300, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1.2 }}
+        transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
         <FeaturesSection />
       </motion.div>
       <motion.div
-        initial={{ y: 300, opacity: 0 }}
+        initial={{ y: 200, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.2 }}
         viewport={{ once: true }}
@@ -33,7 +33,7 @@ export default function Home() {
         <FunctionalitySection />
       </motion.div>
       <motion.div
-        initial={{ y: 300, opacity: 0 }}
+        initial={{ y: 200, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.2 }}
         viewport={{ once: true }}

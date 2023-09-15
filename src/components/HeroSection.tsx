@@ -2,8 +2,17 @@
 import Link from "next/link";
 import { quicksand, ubuntu, worksans } from "@/app/fonts";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function HeroSection() {
+  const {
+    data: session,
+    status,
+  }: {
+    data: any;
+    status: "loading" | "authenticated" | "unauthenticated";
+  } = useSession();
+
   return (
     <section className="flex flex-row text-custom-white py-12">
       {/* LEFT SIDE */}
@@ -24,7 +33,7 @@ export default function HeroSection() {
             className="w-1/2 flex justify-center"
           >
             <Link
-              href="/api/auth/signin"
+              href={session ? "/passwords" : "/api/auth/signin"}
               className={`${ubuntu.className} border rounded-lg border-white w-full py-4 tracking-wide hover:bg-white hover:text-black duration-200`}
             >
               TRY IT NOW!

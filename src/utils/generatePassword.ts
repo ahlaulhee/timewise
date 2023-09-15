@@ -7,6 +7,7 @@ export const generatePassword = (
   masterpassword: string,
   keyword: string
 ) => {
+  if (!gmail || !masterpassword || !keyword) return;
   const data = gmail + masterpassword + keyword;
   const hash = cryptojs.SHA256(data).toString(cryptojs.enc.Base64);
   const characters = hash.match(/[a-z]+/gi)?.join("") || "";

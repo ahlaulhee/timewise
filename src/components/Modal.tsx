@@ -4,29 +4,60 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { generatePassword } from "@/utils/generatePassword";
+import { useSession } from "next-auth/react";
 
-const createPassword = (generatedPassword: string, keyword: string) => {
-  const retrievedPasswords = localStorage.getItem("passwords");
-  const passwords: string[] = retrievedPasswords
-    ? JSON.parse(retrievedPasswords)
+interface UserData {
+  expires: Date;
+  user: {
+    id?: string | null;
+    name?: string | null;
+    password?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+}
+
+const createPassword = (userId: string, keyword: string) => {
+  // TODO: Add validations
+  // TODO: Add password types (long, short, pin, etc)
+  // TODO: Add notifications
+  const retrievedKeywords = localStorage.getItem("keywords");
+  const keywords: { userId: string; keyword: string }[] = retrievedKeywords
+    ? JSON.parse(retrievedKeywords)
     : [];
 
-  passwords.push(keyword);
+  keywords.push({ userId: userId, keyword: keyword });
 
-  localStorage.setItem("passwords", JSON.stringify(passwords));
+  localStorage.setItem("keywords", JSON.stringify(keywords));
 };
 
 function Modal({ setOpenModal }: { setOpenModal: (arg0: boolean) => void }) {
+  const {
+    data: session,
+    status,
+  }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
+    useSession();
+
   const [generatedPassword, setGeneratedPassword] = useState("...");
   const [keyword, setKeyword] = useState("");
   const [type, setType] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
-    if (e.target.value) {
-      setGeneratedPassword(
-        generatePassword("ahlaulhe@gmail.com", "test", e.target.value)
+    if (
+      e.target.value &&
+      session &&
+      session?.user?.name &&
+      session?.user?.password
+    ) {
+      const genPass = generatePassword(
+        session?.user?.name,
+        session?.user?.password,
+        e.target.value
       );
+      if (genPass) {
+        setGeneratedPassword(genPass);
+      }
     } else {
       setGeneratedPassword("...");
     }
@@ -34,13 +65,22 @@ function Modal({ setOpenModal }: { setOpenModal: (arg0: boolean) => void }) {
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setType(e.target.value);
-    setGeneratedPassword(
-      generatePassword("ahlaulhe@gmail.com", "test", keyword)
-    );
+    if (session && keyword) {
+      const genPass = generatePassword(
+        session?.user?.name,
+        session?.user?.password,
+        e.target.value
+      );
+      if (genPass) {
+        setGeneratedPassword(genPass);
+      }
+    } else {
+      setGeneratedPassword("...");
+    }
   };
 
   const handleSubmit = () => {
-    createPassword(generatedPassword, keyword);
+    createPassword(session?.user?.id, keyword);
     setKeyword("");
     setGeneratedPassword("...");
     setOpenModal(false);
@@ -54,7 +94,7 @@ function Modal({ setOpenModal }: { setOpenModal: (arg0: boolean) => void }) {
       transition={{ duration: 0.7, ease: "anticipate" }}
       className={`${inter.className} w-full fixed flex justify-center items-center`}
     >
-      <div className="w-[500px] h-[450px] bg-foreground rounded-[12px] shadow-lg flex flex-col justify-between p-3">
+      <div className="w-[500px] h-[450px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
         <div className="flex justify-end">
           <button
             className="bg-red-500 hover:bg-red-700 duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
