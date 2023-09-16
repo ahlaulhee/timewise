@@ -38,7 +38,7 @@ const PasswordItem = ({
           Copy
         </button>
         <button
-          className="hover:underline active:text-custom-cyan duration-100"
+          className="hover:underline active:text-custom-red duration-100"
           onClick={() => handleDelete(keyword)}
         >
           Delete

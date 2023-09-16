@@ -31,7 +31,6 @@ function TaskModal({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setTaskData({ ...taskData, [e.target.name]: e.target.value });
-    console.log(taskData);
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -39,6 +38,8 @@ function TaskModal({
   };
 
   const handleSubmit = async () => {
+    // TODO: Add validations
+    // TODO: Add notifications
     const data = {
       title: taskData.title,
       description: taskData.description,
@@ -82,7 +83,7 @@ function TaskModal({
           type="text"
           placeholder="Title..."
           name="title"
-          maxLength={20}
+          maxLength={35}
           value={taskData.title}
           onChange={handleChange}
           className="w-full rounded bg-main p-3 tracking-widest"
@@ -90,7 +91,6 @@ function TaskModal({
         <textarea
           placeholder="Description..."
           name="description"
-          maxLength={20}
           rows={6}
           value={taskData.description}
           onChange={handleChange}

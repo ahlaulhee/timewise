@@ -26,6 +26,56 @@ const TaskItem = ({
   handleDelete: (id: number) => void;
 }) => {
   // TODO: Add copy counter
+  const [hours, minutes, seconds] = timespent.split(":");
+  const totalSeconds = +hours * 3600 + +minutes * 60 + +seconds;
+  const [time, setTime] = useState(totalSeconds);
+  const [timer, setTimer] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (timer) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else if (!timer && time !== 0) {
+      if (interval) {
+        clearInterval(interval);
+      }
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [timer, time]);
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+
+    const formattedH = h < 10 ? `0${h}` : h;
+    const formattedM = m < 10 ? `0${m}` : m;
+    const formattedS = s < 10 ? `0${s}` : s;
+
+    return `${formattedH}:${formattedM}:${formattedS}`;
+  };
+
+  const startTimer = () => {
+    setTimer(true);
+  };
+
+  const stopTimer = async () => {
+    const spentTime = formatTime(time);
+    await axios.put(`/api/tasks/${id}`, {
+      title,
+      description,
+      status,
+      timespent: spentTime,
+    });
+    setTimer(false);
+  };
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
@@ -36,15 +86,36 @@ const TaskItem = ({
       className={`${worksans.className} flex justify-evenly m-4 p-4 bg-main rounded-lg`}
     >
       <p className="w-1/3 font-bold">{title}</p>
-      <p className="w-1/3 flex justify-center">Status: {status}</p>
-      <p className="w-1/3 flex justify-center">Spent Time: {timespent}</p>
-      <div className="w-1/3 space-x-4 flex justify-end">
-        <button
-          className="hover:underline active:text-custom-cyan duration-100"
-          onClick={() => handleTimer(timespent)}
+      <p className="w-1/4 flex justify-center">
+        Status:
+        <span
+          className={`${
+            status === "DONE" ? "text-green-600" : "text-blue-600"
+          } ml-1 font-bold`}
         >
-          Start Timer
-        </button>
+          {status}
+        </span>
+      </p>
+      <div className="flex w-1/4 space-x-1 justify-center">
+        <p className="text-center">Spent Time:</p>
+        <p>{formatTime(time)}</p>
+      </div>
+      <div className="w-1/3 space-x-4 flex justify-end">
+        {timer ? (
+          <button
+            className="hover:underline active:text-custom-purple duration-100"
+            onClick={() => stopTimer()}
+          >
+            Stop Timer
+          </button>
+        ) : (
+          <button
+            className="hover:underline active:text-custom-purple duration-100"
+            onClick={() => startTimer()}
+          >
+            Start Timer
+          </button>
+        )}
         <button
           className="hover:underline active:text-custom-cyan duration-100"
           onClick={() => handleEdit(id)}
@@ -52,7 +123,7 @@ const TaskItem = ({
           Edit
         </button>
         <button
-          className="hover:underline active:text-custom-cyan duration-100"
+          className="hover:underline active:text-custom-red duration-100"
           onClick={() => handleDelete(id)}
         >
           Remove
@@ -76,6 +147,7 @@ export default function Tasks() {
     }[]
   >();
   const [modalOpen, setModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const {
     data: session,
     status,
@@ -87,17 +159,21 @@ export default function Tasks() {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {};
   const handleTimer = () => {};
   const handleEdit = () => {};
-  const handleDelete = () => {};
+  const handleDelete = async (id: number) => {
+    // TODO: Add notification
+    await axios.delete(`/api/tasks/${id}`);
+    setRefresh(!refresh);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
       await axios
-        .get(`/api/tasks/${session?.user?.id}`)
+        .get(`/api/tasks/user/${session?.user?.id}`)
         .then((res) => res.data)
         .then((data) => setTasks(data.tasks));
     };
     fetchPosts();
-  }, [modalOpen, session?.user?.id]);
+  }, [modalOpen, session?.user?.id, refresh]);
 
   return (
     <motion.div
@@ -135,19 +211,21 @@ export default function Tasks() {
       <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
           {tasks &&
-            tasks.map((task) => (
-              <TaskItem
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                status={task.status}
-                description={task.description}
-                timespent={task.timeSpent}
-                handleTimer={handleTimer}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-              />
-            ))}
+            tasks
+              .sort((a, b) => b.id - a.id)
+              .map((task) => (
+                <TaskItem
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  status={task.status}
+                  description={task.description}
+                  timespent={task.timeSpent}
+                  handleTimer={handleTimer}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                />
+              ))}
         </AnimatePresence>
       </div>
     </motion.div>
