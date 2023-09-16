@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import TaskModal from "@/components/TaskModal";
 import axios from "axios";
+import UpdateTaskModal from "@/components/UpdateTaskModal";
 
 const TaskItem = ({
   id,
@@ -30,6 +31,10 @@ const TaskItem = ({
   const totalSeconds = +hours * 3600 + +minutes * 60 + +seconds;
   const [time, setTime] = useState(totalSeconds);
   const [timer, setTimer] = useState(false);
+
+  useEffect(() => {
+    setTime(totalSeconds);
+  }, [totalSeconds]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -148,6 +153,26 @@ export default function Tasks() {
   >();
   const [modalOpen, setModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(true);
+  const [editableTask, setEditableTask] = useState<{
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    timeSpent: string;
+    createdAt: Date;
+    updateAt: Date;
+    userId: string;
+  }>({
+    id: 0,
+    title: "",
+    description: "",
+    status: "",
+    timeSpent: "",
+    createdAt: new Date(Date.now()),
+    updateAt: new Date(Date.now()),
+    userId: "",
+  });
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const {
     data: session,
     status,
@@ -158,7 +183,13 @@ export default function Tasks() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {};
   const handleTimer = () => {};
-  const handleEdit = () => {};
+  const handleEdit = async (id: number) => {
+    await axios
+      .get(`/api/tasks/${id}`)
+      .then((res) => res.data)
+      .then((data) => setEditableTask(data.storedTask))
+      .finally(() => setUpdateModalOpen(true));
+  };
   const handleDelete = async (id: number) => {
     // TODO: Add notification
     await axios.delete(`/api/tasks/${id}`);
@@ -173,7 +204,7 @@ export default function Tasks() {
         .then((data) => setTasks(data.tasks));
     };
     fetchPosts();
-  }, [modalOpen, session?.user?.id, refresh]);
+  }, [modalOpen, updateModalOpen, session?.user?.id, refresh]);
 
   return (
     <motion.div
@@ -207,6 +238,14 @@ export default function Tasks() {
       </div>
       <AnimatePresence>
         {modalOpen && <TaskModal setOpenModal={setModalOpen} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {updateModalOpen && (
+          <UpdateTaskModal
+            setOpenModal={setUpdateModalOpen}
+            editableTask={editableTask}
+          />
+        )}
       </AnimatePresence>
       <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
