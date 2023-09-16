@@ -1,12 +1,11 @@
 "use client";
 
-import Modal from "@/components/Modal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { ubuntu } from "../fonts";
+import { inter, worksans } from "../fonts";
 import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
 import { generatePassword } from "@/utils/generatePassword";
+import PasswordModal from "@/components/PasswordModal";
 
 const PasswordItem = ({
   keyword,
@@ -19,6 +18,7 @@ const PasswordItem = ({
   handleCopy: (genPassword: string) => void;
   handleDelete: (keyword: string) => void;
 }) => {
+  // TODO: Add copy counter
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
@@ -26,7 +26,7 @@ const PasswordItem = ({
       transition={{ type: "spring", duration: 0.8 }}
       exit={{ opacity: 0 }}
       viewport={{ once: true }}
-      className="flex justify-evenly m-4 p-4 bg-main rounded-lg"
+      className={`${worksans.className} flex justify-evenly m-4 p-4 bg-main rounded-lg`}
     >
       <p className="w-1/3 font-bold">{keyword}</p>
       <p className="w-1/3 flex justify-center">{genPassword}</p>
@@ -101,13 +101,13 @@ export default function Passwords() {
 
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }}
+      initial={{ x: -300, opacity: 0 }}
       whileInView={{ x: 0, opacity: 1 }}
       transition={{ type: "spring", duration: 0.5 }}
       // viewport={{ once: true }}
     >
       <div
-        className={`${ubuntu.className} max-w-screen-xl mx-auto flex justify-between items-center`}
+        className={`${inter.className} max-w-screen-xl mx-auto flex justify-between items-center`}
       >
         <input
           type="text"
@@ -118,19 +118,22 @@ export default function Passwords() {
         <p className="hidden md:block text-center text-3xl">
           {session?.user?.name}&apos;s passwords
         </p>
-        <button
-          className="py-3 px-20 border-2 rounded-lg bg-foreground text-white cursor-pointer"
+        <motion.button
+          initial={{ scale: 1, opacity: 1 }}
+          whileTap={{ scale: 1.05, opacity: 1 }}
+          transition={{ duration: 0.01 }}
+          className="py-3 px-20 border-2 rounded-lg bg-foreground hover:bg-main duration-200 text-white cursor-pointer"
           onClick={() => {
             setModalOpen(true);
           }}
         >
           ADD PASSWORD
-        </button>
+        </motion.button>
       </div>
       <AnimatePresence>
-        {modalOpen && <Modal setOpenModal={setModalOpen} />}
+        {modalOpen && <PasswordModal setOpenModal={setModalOpen} />}
       </AnimatePresence>
-      <div className="max-w-screen-xl mx-auto h-screen rounded-lg bg-foreground m-3 pt-1">
+      <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
           {keywords.map((e) => (
             <PasswordItem

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { generatePassword } from "@/utils/generatePassword";
 import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 interface UserData {
   expires: Date;
@@ -31,7 +32,11 @@ const createPassword = (userId: string, keyword: string) => {
   localStorage.setItem("keywords", JSON.stringify(keywords));
 };
 
-function Modal({ setOpenModal }: { setOpenModal: (arg0: boolean) => void }) {
+function PasswordModal({
+  setOpenModal,
+}: {
+  setOpenModal: (arg0: boolean) => void;
+}) {
   const {
     data: session,
     status,
@@ -151,4 +156,4 @@ function Modal({ setOpenModal }: { setOpenModal: (arg0: boolean) => void }) {
   );
 }
 
-export default Modal;
+export default PasswordModal;

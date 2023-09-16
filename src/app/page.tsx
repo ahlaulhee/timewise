@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="max-w-screen-xl mx-auto space-y-10">
       <motion.div
-        initial={{ y: -300, opacity: 0 }}
+        initial={{ y: 300, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1 }}
         viewport={{ once: true }}
