@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 
 function TaskModal({
   setOpenModal,
@@ -23,7 +24,7 @@ function TaskModal({
   }>({
     title: "",
     description: "",
-    status: "",
+    status: "TODO",
   });
 
   const handleChange = (
@@ -37,7 +38,21 @@ function TaskModal({
     setTaskData({ ...taskData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const data = {
+      title: taskData.title,
+      description: taskData.description,
+      status: taskData.status,
+      userId: session.user.id,
+    };
+    await axios.post("/api/tasks", data);
+    setOpenModal(false);
+    setTaskData({
+      title: "",
+      description: "",
+      status: taskData.status,
+    });
+  };
 
   return (
     <motion.div
@@ -87,9 +102,9 @@ function TaskModal({
           onChange={handleSelectChange}
           className="w-full rounded bg-main p-4 tracking-widest"
         >
-          <option value="todo">To Do</option>
-          <option value="inprogress">In Progress</option>
-          <option value="done">Done</option>
+          <option value="TODO">To Do</option>
+          <option value="INPROGRESS">In Progress</option>
+          <option value="DONE">Done</option>
         </select>
         <div className="flex-1/5 flex justify-center items-center space-x-4">
           <button
