@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { generatePassword } from "@/utils/generatePassword";
 import { useSession } from "next-auth/react";
@@ -45,6 +45,8 @@ function PasswordModal({
   const [generatedPassword, setGeneratedPassword] = useState("...");
   const [keyword, setKeyword] = useState("");
   const [type, setType] = useState("");
+
+  const dragControls = useDragControls();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
@@ -94,6 +96,8 @@ function PasswordModal({
     <div className="w-full flex justify-center">
       <motion.div
         drag
+        dragControls={dragControls}
+        dragListener={false}
         dragConstraints={{
           top: -window.innerHeight / 2 + 400,
           left: -window.innerWidth / 2 + 500,
@@ -107,7 +111,12 @@ function PasswordModal({
         className={`${inter.className} w-fit fixed`}
       >
         <div className="w-[500px] h-[450px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
-          <div className="flex justify-between items-center">
+          <div
+            onPointerDown={(e) => {
+              dragControls.start(e);
+            }}
+            className="flex justify-between items-center"
+          >
             <div className="w-1/3"></div>
             <p className="text-2xl font-bold w-full text-center">
               Add Password

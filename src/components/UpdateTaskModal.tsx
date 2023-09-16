@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -42,6 +42,8 @@ function UpdateTaskModal({
     userId: "",
   });
 
+  const dragControls = useDragControls();
+
   useEffect(() => {
     setTaskData({
       title: editableTask?.title,
@@ -80,6 +82,8 @@ function UpdateTaskModal({
     <div className="w-full flex justify-center">
       <motion.div
         drag
+        dragControls={dragControls}
+        dragListener={false}
         dragConstraints={{
           top: -window.innerHeight / 2 + 400,
           left: -window.innerWidth / 2 + 500,
@@ -93,7 +97,12 @@ function UpdateTaskModal({
         className={`${inter.className} w-fit fixed`}
       >
         <div className="w-[500px] h-[470px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
-          <div className="flex justify-between items-center">
+          <div
+            onPointerDown={(e) => {
+              dragControls.start(e);
+            }}
+            className="flex justify-between items-center"
+          >
             <div className="w-1/3"></div>
             <p className="text-2xl font-bold w-1/3 text-center">Update Task</p>
             <div className="w-1/3 flex justify-end">

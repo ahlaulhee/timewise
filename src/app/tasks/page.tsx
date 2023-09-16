@@ -33,6 +33,7 @@ export default function Tasks() {
       userId: string;
     }[]
   >();
+  const [searchInput, setSearchInput] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(true);
   const [editableTask, setEditableTask] = useState<{
@@ -64,6 +65,7 @@ export default function Tasks() {
   } = useSession();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
     setFilteredTasks(
       tasks?.filter((task) =>
         task.title.toLowerCase().includes(e.target.value.toLowerCase())
@@ -80,6 +82,7 @@ export default function Tasks() {
   const handleDelete = async (id: number) => {
     // TODO: Add notification
     await axios.delete(`/api/tasks/${id}`);
+    setSearchInput("");
     setRefresh(!refresh);
   };
 
@@ -108,6 +111,7 @@ export default function Tasks() {
         <input
           type="text"
           placeholder="Search..."
+          value={searchInput}
           onChange={handleSearch}
           className="rounded-lg pl-4 pr-12 py-3 text-black"
         />
