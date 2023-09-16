@@ -13,7 +13,6 @@ const TaskItem = ({
   description,
   status,
   timespent,
-  handleTimer,
   handleEdit,
   handleDelete,
 }: {
@@ -22,7 +21,6 @@ const TaskItem = ({
   description: string;
   status: string;
   timespent: string;
-  handleTimer: (timespent: string) => void;
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
 }) => {
@@ -151,6 +149,18 @@ export default function Tasks() {
       userId: string;
     }[]
   >();
+  const [filteredTasks, setFilteredTasks] = useState<
+    {
+      id: number;
+      title: string;
+      description: string;
+      status: string;
+      timeSpent: string;
+      createdAt: Date;
+      updatedAt: Date;
+      userId: string;
+    }[]
+  >();
   const [modalOpen, setModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(true);
   const [editableTask, setEditableTask] = useState<{
@@ -181,8 +191,13 @@ export default function Tasks() {
     status: "loading" | "authenticated" | "unauthenticated";
   } = useSession();
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {};
-  const handleTimer = () => {};
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilteredTasks(
+      tasks?.filter((task) =>
+        task.title.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    );
+  };
   const handleEdit = async (id: number) => {
     await axios
       .get(`/api/tasks/${id}`)
@@ -201,7 +216,10 @@ export default function Tasks() {
       await axios
         .get(`/api/tasks/user/${session?.user?.id}`)
         .then((res) => res.data)
-        .then((data) => setTasks(data.tasks));
+        .then((data) => {
+          setTasks(data.tasks);
+          setFilteredTasks(data.tasks);
+        });
     };
     fetchPosts();
   }, [modalOpen, updateModalOpen, session?.user?.id, refresh]);
@@ -249,8 +267,8 @@ export default function Tasks() {
       </AnimatePresence>
       <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
-          {tasks &&
-            tasks
+          {filteredTasks &&
+            filteredTasks
               .sort((a, b) => b.id - a.id)
               .map((task) => (
                 <TaskItem
@@ -260,7 +278,6 @@ export default function Tasks() {
                   status={task.status}
                   description={task.description}
                   timespent={task.timeSpent}
-                  handleTimer={handleTimer}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                 />
