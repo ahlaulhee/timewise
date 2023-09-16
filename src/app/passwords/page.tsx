@@ -9,16 +9,17 @@ import PasswordModal from "@/components/PasswordModal";
 
 const PasswordItem = ({
   keyword,
+  timesCopied,
   genPassword,
   handleCopy,
   handleDelete,
 }: {
   keyword: string;
+  timesCopied: number;
   genPassword: string | undefined;
-  handleCopy: (genPassword: string) => void;
+  handleCopy: (keyword: string, genPassword: string) => void;
   handleDelete: (keyword: string) => void;
 }) => {
-  // TODO: Add copy counter
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
@@ -28,12 +29,14 @@ const PasswordItem = ({
       viewport={{ once: true }}
       className={`${worksans.className} flex justify-evenly m-4 p-4 bg-main rounded-lg`}
     >
-      <p className="w-1/3 font-bold">{keyword}</p>
+      <p className="w-1/3 font-bold">
+        {timesCopied} | {keyword}
+      </p>
       <p className="w-1/3 flex justify-center">{genPassword}</p>
       <div className="w-1/3 space-x-4 flex justify-end">
         <button
           className="hover:underline active:text-custom-cyan duration-100"
-          onClick={() => handleCopy(genPassword ? genPassword : "")}
+          onClick={() => handleCopy(keyword, genPassword ? genPassword : "")}
         >
           Copy
         </button>
@@ -50,8 +53,9 @@ const PasswordItem = ({
 
 export default function Passwords() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
   const [keywords, setKeywords] = useState<
-    { userId: string; keyword: string }[]
+    { userId: string; keyword: string; timesCopied: number }[]
   >([]);
   const {
     data: session,
@@ -63,9 +67,8 @@ export default function Passwords() {
 
   useEffect(() => {
     const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: { userId: string; keyword: string }[] = retrievedKeywords
-      ? JSON.parse(retrievedKeywords)
-      : [];
+    const keywords: { userId: string; keyword: string; timesCopied: number }[] =
+      retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
     const userKeywords = keywords.filter(
       (keyword) => keyword.userId === session?.user?.id
     );
@@ -73,28 +76,42 @@ export default function Passwords() {
   }, [session?.user?.id, modalOpen]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
     const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: { userId: string; keyword: string }[] = retrievedKeywords
-      ? JSON.parse(retrievedKeywords)
-      : [];
+    const keywords: { userId: string; keyword: string; timesCopied: number }[] =
+      retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
     const userKeywords = keywords.filter((keyword) =>
       keyword.keyword.toLowerCase().includes(e.target.value.toLowerCase())
     );
     setKeywords(userKeywords);
   };
 
-  const handleCopy = (pass: string) => {
+  const handleCopy = (keyw: string, pass: string) => {
     navigator.clipboard.writeText(pass);
+    const retrievedKeywords = localStorage.getItem("keywords");
+    const keywords: { userId: string; keyword: string; timesCopied: number }[] =
+      retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+
+    const matchedKeyword = keywords.find((kw) => kw.keyword === keyw);
+    if (matchedKeyword) {
+      matchedKeyword.timesCopied += 1;
+    }
+    const userKeywords = keywords.filter((keyword) =>
+      keyword.keyword.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    setKeywords(userKeywords);
+    const modifiedKeywordsString = JSON.stringify(keywords);
+    localStorage.setItem("keywords", modifiedKeywordsString);
     // TODO: add notification
   };
 
   const handleDelete = (keyw: string) => {
     const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: { userId: string; keyword: string }[] = retrievedKeywords
-      ? JSON.parse(retrievedKeywords)
-      : [];
+    const keywords: { userId: string; keyword: string; timesCopied: number }[] =
+      retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
     const userKeywords = keywords.filter((keyword) => keyword.keyword !== keyw);
     localStorage.setItem("keywords", JSON.stringify(userKeywords));
+    setSearchInput("");
     setKeywords(userKeywords);
     // TODO: add notification
   };
@@ -112,6 +129,7 @@ export default function Passwords() {
         <input
           type="text"
           placeholder="Search..."
+          value={searchInput}
           onChange={handleSearch}
           className="rounded-lg pl-4 pr-12 py-3 text-black"
         />
@@ -135,19 +153,22 @@ export default function Passwords() {
       </AnimatePresence>
       <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
-          {keywords.map((e) => (
-            <PasswordItem
-              key={e.keyword}
-              keyword={e.keyword}
-              handleCopy={handleCopy}
-              handleDelete={handleDelete}
-              genPassword={generatePassword(
-                session?.user?.name,
-                session?.user?.password,
-                e.keyword
-              )}
-            />
-          ))}
+          {keywords
+            .sort((a, b) => b.timesCopied - a.timesCopied)
+            .map((e) => (
+              <PasswordItem
+                key={e.keyword}
+                keyword={e.keyword}
+                timesCopied={e.timesCopied}
+                handleCopy={handleCopy}
+                handleDelete={handleDelete}
+                genPassword={generatePassword(
+                  session?.user?.name,
+                  session?.user?.password,
+                  e.keyword
+                )}
+              />
+            ))}
         </AnimatePresence>
       </div>
     </motion.div>

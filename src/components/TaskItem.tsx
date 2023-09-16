@@ -21,7 +21,6 @@ const TaskItem = ({
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
 }) => {
-  // TODO: Add copy counter
   const [hours, minutes, seconds] = timespent.split(":");
   const totalSeconds = +hours * 3600 + +minutes * 60 + +seconds;
   const [time, setTime] = useState(totalSeconds);
@@ -98,7 +97,9 @@ const TaskItem = ({
       </p>
       <div className="flex w-1/4 space-x-1 justify-center">
         <p className="text-center">Spent Time:</p>
-        <p>{formatTime(time)}</p>
+        <p className={`${timer ? "text-custom-green" : ""}`}>
+          {formatTime(time)}
+        </p>
       </div>
       <div className="w-1/3 space-x-4 flex justify-end">
         {timer ? (

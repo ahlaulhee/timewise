@@ -56,74 +56,83 @@ function TaskModal({
   };
 
   return (
-    <motion.div
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0, opacity: 0 }}
-      transition={{ duration: 0.7, ease: "anticipate" }}
-      className={`${inter.className} w-full fixed flex justify-center items-center`}
-    >
-      <div className="w-[500px] h-[450px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
-        <div className="flex justify-between items-center">
-          <div className="w-1/3"></div>
-          <p className="text-2xl font-bold w-1/3 text-center">Create Task</p>
-          <div className="w-1/3 flex justify-end">
+    <div className="w-full flex justify-center">
+      <motion.div
+        drag
+        dragConstraints={{
+          top: -window.innerHeight / 2 + 400,
+          left: -window.innerWidth / 2 + 500,
+          right: window.innerWidth / 2 - 500,
+          bottom: window.innerHeight / 2 - 150,
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0, opacity: 0 }}
+        transition={{ duration: 0.7, ease: "anticipate" }}
+        className={`${inter.className} w-fit fixed`}
+      >
+        <div className="w-[500px] h-[450px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
+          <div className="flex justify-between items-center">
+            <div className="w-1/3"></div>
+            <p className="text-2xl font-bold w-1/3 text-center">Create Task</p>
+            <div className="w-1/3 flex justify-end">
+              <button
+                className="bg-red-500 hover:bg-red-700 duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
+                onClick={() => {
+                  setOpenModal(false);
+                }}
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <div className="text-center flex flex-col justify-center items-center"></div>
+          <input
+            type="text"
+            placeholder="Title..."
+            name="title"
+            maxLength={35}
+            value={taskData.title}
+            onChange={handleChange}
+            className="w-full rounded bg-main p-3 tracking-widest"
+          />
+          <textarea
+            placeholder="Description..."
+            name="description"
+            rows={6}
+            value={taskData.description}
+            onChange={handleChange}
+            className="w-full rounded bg-main p-3 tracking-widest resize-none"
+          />
+          <select
+            name="status"
+            defaultValue="todo"
+            onChange={handleSelectChange}
+            className="w-full rounded bg-main p-4 tracking-widest"
+          >
+            <option value="TODO">To Do</option>
+            <option value="INPROGRESS">In Progress</option>
+            <option value="DONE">Done</option>
+          </select>
+          <div className="flex-1/5 flex justify-center items-center space-x-4">
             <button
-              className="bg-red-500 hover:bg-red-700 duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
+              className="w-full p-2 border-2 border-red-500 bg-red-700 text-white hover:bg-red-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
               onClick={() => {
                 setOpenModal(false);
               }}
             >
-              X
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="w-full p-2 border-2 border-green-500 bg-green-700 text-white hover:bg-green-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
+            >
+              Create
             </button>
           </div>
         </div>
-        <div className="text-center flex flex-col justify-center items-center"></div>
-        <input
-          type="text"
-          placeholder="Title..."
-          name="title"
-          maxLength={35}
-          value={taskData.title}
-          onChange={handleChange}
-          className="w-full rounded bg-main p-3 tracking-widest"
-        />
-        <textarea
-          placeholder="Description..."
-          name="description"
-          rows={6}
-          value={taskData.description}
-          onChange={handleChange}
-          className="w-full rounded bg-main p-3 tracking-widest resize-none"
-        />
-        <select
-          name="status"
-          defaultValue="todo"
-          onChange={handleSelectChange}
-          className="w-full rounded bg-main p-4 tracking-widest"
-        >
-          <option value="TODO">To Do</option>
-          <option value="INPROGRESS">In Progress</option>
-          <option value="DONE">Done</option>
-        </select>
-        <div className="flex-1/5 flex justify-center items-center space-x-4">
-          <button
-            className="w-full p-2 border-2 border-red-500 bg-red-700 text-white hover:bg-red-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
-            onClick={() => {
-              setOpenModal(false);
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="w-full p-2 border-2 border-green-500 bg-green-700 text-white hover:bg-green-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
-          >
-            Create
-          </button>
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
