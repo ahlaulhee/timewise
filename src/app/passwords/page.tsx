@@ -8,6 +8,10 @@ import { generatePassword } from "@/utils/generatePassword";
 import PasswordModal from "@/components/PasswordModal";
 import { useRouter } from "next/navigation";
 
+import Swal from "sweetalert2";
+// import "@sweetalert2/theme-dark/dark.css";
+import { Toast } from "@/utils/Toast";
+
 const PasswordItem = ({
   keyword,
   timesCopied,
@@ -36,13 +40,13 @@ const PasswordItem = ({
       <p className="w-1/3 flex justify-center">{genPassword}</p>
       <div className="w-1/3 space-x-4 flex justify-end">
         <button
-          className="hover:underline active:text-custom-cyan duration-100"
+          className="hover:underline active:text-teal duration-100"
           onClick={() => handleCopy(keyword, genPassword ? genPassword : "")}
         >
           Copy
         </button>
         <button
-          className="hover:underline active:text-custom-red duration-100"
+          className="hover:underline active:text-maroon duration-100"
           onClick={() => handleDelete(keyword)}
         >
           Delete
@@ -109,7 +113,10 @@ export default function Passwords() {
     setKeywords(userKeywords);
     const modifiedKeywordsString = JSON.stringify(keywords);
     localStorage.setItem("keywords", modifiedKeywordsString);
-    // TODO: add notification
+    Toast.fire({
+      icon: "info",
+      title: `The password for ${keyw} has been copied.`,
+    });
   };
 
   const handleDelete = (keyw: string) => {
@@ -128,14 +135,17 @@ export default function Passwords() {
     );
     setSearchInput("");
     setKeywords(userKeywords);
-    // TODO: add notification
+    Toast.fire({
+      icon: "success",
+      title: `The password for ${keyw} was deleted successfully.`,
+    });
   };
 
   useEffect(() => {
     if (!session) {
       router.push("/login");
     }
-  }, [session]);
+  }, [session, router]);
 
   return (
     <motion.div
@@ -152,12 +162,12 @@ export default function Passwords() {
           placeholder="Search..."
           value={searchInput}
           onChange={handleSearch}
-          className="rounded-lg pl-4 pr-12 py-3 text-black"
+          className="rounded-lg pl-4 py-3 text-black w-full md:w-1/4"
         />
         {session ? (
-          <div className="text-center">
+          <div className="text-center w-2/4 flex justify-center flex-col items-center">
             <button
-              className="text-custom-red border rounded px-2"
+              className="text-crimson border rounded px-2"
               onClick={() => signOut()}
             >
               Sign Out
@@ -171,7 +181,7 @@ export default function Passwords() {
           initial={{ scale: 1, opacity: 1 }}
           whileTap={{ scale: 1.05, opacity: 1 }}
           transition={{ duration: 0.01 }}
-          className="py-3 px-20 border-2 rounded-lg bg-foreground hover:bg-main duration-200 text-white cursor-pointer"
+          className="py-3 border-2 rounded-lg bg-white-smoke hover:bg-main duration-200 text-main hover:text-white cursor-pointer w-full md:w-1/4"
           onClick={() => {
             setModalOpen(true);
           }}

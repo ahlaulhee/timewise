@@ -22,7 +22,7 @@ export default function FeatureCard({
     >
       <div className="block h-full rounded-lg bg-main shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ">
         <div className="flex justify-center">
-          <div className="-mt-8 inline-block rounded-full bg-primary-100 p-4 text-primary shadow-md bg-custom-red">
+          <div className="-mt-8 inline-block rounded-full bg-primary-100 p-4 text-primary shadow-md bg-maroon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

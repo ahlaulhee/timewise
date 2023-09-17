@@ -9,6 +9,10 @@ import UpdateTaskModal from "@/components/UpdateTaskModal";
 import TaskItem from "@/components/TaskItem";
 import { useRouter } from "next/navigation";
 
+import Swal from "sweetalert2";
+import { CustomAlert } from "@/utils/Toast";
+// import "@sweetalert2/theme-dark/dark.css";
+
 export default function Tasks() {
   const [tasks, setTasks] = useState<
     {
@@ -82,31 +86,54 @@ export default function Tasks() {
       .then((data) => setEditableTask(data.storedTask))
       .finally(() => setUpdateModalOpen(true));
   };
-  const handleDelete = async (id: number) => {
-    // TODO: Add notification
-    await axios.delete(`/api/tasks/${id}`);
-    setSearchInput("");
-    setRefresh(!refresh);
+  const handleDelete = (id: number) => {
+    CustomAlert.fire({
+      title: "Are you sure you want to delete this task?",
+      text: "Once deleted, it is not possible to recover this task.",
+      icon: "warning",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      showCancelButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await axios.delete(`/api/tasks/${id}`).then(() => {
+          setRefresh(!refresh);
+          setSearchInput("");
+        });
+        CustomAlert.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
 
   useEffect(() => {
     if (!session) {
       router.push("/login");
     }
-  }, [session]);
+  }, [session, router]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       await axios
         .get(`/api/tasks/user/${session?.user?.id}`)
-        .then((res) => res.data)
+        .then((res) => {
+          return res.data;
+        })
         .then((data) => {
           setTasks(data.tasks);
           setFilteredTasks(data.tasks);
+        })
+        .catch((err) => {
+          setTasks([]);
+          setFilteredTasks([]);
+          console.log(err);
         });
     };
     if (session) fetchPosts();
-  }, [modalOpen, updateModalOpen, session?.user?.id, refresh]);
+  }, [modalOpen, updateModalOpen, session?.user?.id, refresh, session]);
 
   return (
     <motion.div
@@ -122,17 +149,17 @@ export default function Tasks() {
           placeholder="Search..."
           value={searchInput}
           onChange={handleSearch}
-          className="rounded-lg pl-4 pr-12 py-3 text-black"
+          className="rounded-lg pl-4 py-3 text-black w-full md:w-1/4"
         />
         {session ? (
-          <div className="text-center">
+          <div className="text-center w-2/4 flex justify-center flex-col items-center">
             <button
-              className="text-custom-red border rounded px-2"
+              className="text-crimson border rounded px-2"
               onClick={() => signOut()}
             >
               Sign Out
             </button>
-            <p className="hidden md:block text-center text-3xl">
+            <p className="hidden md:block text-center text-2xl">
               {session?.user?.name}&apos;s tasks
             </p>
           </div>
@@ -141,7 +168,7 @@ export default function Tasks() {
           initial={{ scale: 1, opacity: 1 }}
           whileTap={{ scale: 1.05, opacity: 1 }}
           transition={{ duration: 0.01 }}
-          className="py-3 px-20 border-2 rounded-lg bg-foreground hover:bg-main duration-200 text-white cursor-pointer"
+          className="py-3 border-2 rounded-lg bg-white-smoke hover:bg-main duration-200 text-main hover:text-white cursor-pointer w-full md:w-1/4"
           onClick={() => {
             setModalOpen(true);
           }}

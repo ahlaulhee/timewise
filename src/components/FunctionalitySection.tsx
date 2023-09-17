@@ -36,7 +36,7 @@ const FeatureBoxesJSON = [
 
 export default function FunctionalitySection() {
   return (
-    <section className="text-custom-white space-y-2 py-12">
+    <section className="text-white-smoke space-y-2 py-12">
       <h2 className={`${inter.className} text-3xl text-center`}>
         How Does This Work?
       </h2>

@@ -97,34 +97,34 @@ const TaskItem = ({
       </p>
       <div className="flex w-1/4 space-x-1 justify-center">
         <p className="text-center">Spent Time:</p>
-        <p className={`${timer ? "text-custom-green" : ""}`}>
+        <p className={`${timer ? "text-forest-green" : ""}`}>
           {formatTime(time)}
         </p>
       </div>
       <div className="w-1/3 space-x-4 flex justify-end">
         {timer ? (
           <button
-            className="hover:underline active:text-custom-purple duration-100"
+            className="hover:underline active:text-indigo duration-100"
             onClick={() => stopTimer()}
           >
             Stop Timer
           </button>
         ) : (
           <button
-            className="hover:underline active:text-custom-purple duration-100"
+            className="hover:underline active:text-indigo duration-100"
             onClick={() => startTimer()}
           >
             Start Timer
           </button>
         )}
         <button
-          className="hover:underline active:text-custom-cyan duration-100"
+          className="hover:underline active:text-teal duration-100"
           onClick={() => handleEdit(id)}
         >
           Edit
         </button>
         <button
-          className="hover:underline active:text-custom-red duration-100"
+          className="hover:underline active:text-maroon duration-100"
           onClick={() => handleDelete(id)}
         >
           Remove

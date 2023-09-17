@@ -11,6 +11,9 @@ dependencies:
   '@prisma/client':
     specifier: 5.3.0
     version: 5.3.0(prisma@5.3.0)
+  '@sweetalert2/theme-dark':
+    specifier: ^5.0.15
+    version: 5.0.15
   '@types/node':
     specifier: 20.5.1
     version: 20.5.1
@@ -62,6 +65,9 @@ dependencies:
   react-icons:
     specifier: ^4.11.0
     version: 4.11.0(react@18.2.0)
+  sweetalert2:
+    specifier: ^11.7.28
+    version: 11.7.28
   tailwindcss:
     specifier: 3.3.3
     version: 3.3.3
@@ -354,6 +360,10 @@ packages:
     resolution: {integrity: sha512-sJ902EfIzn1Fa+qYmjdQqh8tPsoxyBz+8yBKC2HKUxyezKJFwPGOn7pv4WY6QuQW//ySQi5lJjA/ZT9sNWWNTg==}
     dependencies:
       tslib: 2.6.2
+    dev: false
+
+  /@sweetalert2/theme-dark@5.0.15:
+    resolution: {integrity: sha512-g1QCwQVOkiAz5hIEBOIvvu0580lubu4KuQlod+48QetYzGIEXNlHEH36QihCDnGVgE6vx48iO48w9q0WrZWyHQ==}
     dev: false
 
   /@types/crypto-js@4.1.2:
@@ -2585,6 +2595,10 @@ packages:
   /supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+    dev: false
+
+  /sweetalert2@11.7.28:
+    resolution: {integrity: sha512-9895DVuYTDlV4Hx4IJablFKMdSqzwpy0PKycztbO4cXnOeVMmw55weOq4gcZAh3/tAyunCKjApFDrlSAcswwcA==}
     dev: false
 
   /tailwindcss@3.3.3:

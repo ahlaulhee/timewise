@@ -25,13 +25,9 @@ export default function Footer() {
       </motion.button>
       <h2 className={`text-3xl`}>
         This project was made possible by{" "}
-        <motion.span
-          whileHover={{ scale: 1.2 }}
-          whileTap={{ scale: 0.9 }}
-          className="font-bold text-custom-white uppercase tracking-wide"
-        >
+        <span className="font-bold text-crimson uppercase tracking-wide">
           ahlaulhe
-        </motion.span>
+        </span>
       </h2>
       <h3 className={`text-2xl`}>YOU CAN FIND ME ON:</h3>
       <div className="flex justify-center space-x-12">
@@ -42,7 +38,7 @@ export default function Footer() {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             className="rounded-full border-4 border-main p-6"
           >
-            <FaLinkedinIn className="h-20 w-20" />
+            <FaLinkedinIn className="h-16 w-16" />
           </motion.div>
           {/* <motion.img
             className="h-32"
@@ -59,7 +55,7 @@ export default function Footer() {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             className="rounded-full border-4 border-main p-6"
           >
-            <FaGithub className="h-20 w-20" />
+            <FaGithub className="h-16 w-16" />
           </motion.div>
           {/* <motion.img
             className="h-32"

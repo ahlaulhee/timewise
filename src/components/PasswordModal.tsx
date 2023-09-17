@@ -110,7 +110,7 @@ function PasswordModal({
         transition={{ duration: 0.7, ease: "anticipate" }}
         className={`${inter.className} w-fit fixed`}
       >
-        <div className="w-[500px] h-[450px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
+        <div className="w-[500px] h-[450px] bg-gainsboro rounded-[12px] shadow-lg flex flex-col justify-between p-3 border-4 border-white-smoke">
           <div
             onPointerDown={(e) => {
               dragControls.start(e);
@@ -118,7 +118,7 @@ function PasswordModal({
             className="flex justify-between items-center"
           >
             <div className="w-1/3"></div>
-            <p className="text-2xl font-bold w-full text-center">
+            <p className="text-2xl font-bold w-full text-main text-center">
               Add Password
             </p>
             <div className="w-1/3 flex justify-end">

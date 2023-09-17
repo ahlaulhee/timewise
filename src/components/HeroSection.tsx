@@ -14,7 +14,7 @@ export default function HeroSection() {
   } = useSession();
 
   return (
-    <section className="flex flex-row text-custom-white py-12">
+    <section className="flex flex-row text-white-smoke py-12">
       {/* LEFT SIDE */}
       <div className="p-4 flex flex-col justify-evenly w-1/2">
         <h1
