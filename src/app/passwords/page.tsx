@@ -3,9 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { inter, worksans } from "../fonts";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { generatePassword } from "@/utils/generatePassword";
 import PasswordModal from "@/components/PasswordModal";
+import { useRouter } from "next/navigation";
 
 const PasswordItem = ({
   keyword,
@@ -65,6 +66,8 @@ export default function Passwords() {
     status: "loading" | "authenticated" | "unauthenticated";
   } = useSession();
 
+  const router = useRouter();
+
   useEffect(() => {
     const retrievedKeywords = localStorage.getItem("keywords");
     const keywords: { userId: string; keyword: string; timesCopied: number }[] =
@@ -80,8 +83,10 @@ export default function Passwords() {
     const retrievedKeywords = localStorage.getItem("keywords");
     const keywords: { userId: string; keyword: string; timesCopied: number }[] =
       retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
-    const userKeywords = keywords.filter((keyword) =>
-      keyword.keyword.toLowerCase().includes(e.target.value.toLowerCase())
+    const userKeywords = keywords.filter(
+      (keyword) =>
+        keyword.keyword.toLowerCase().includes(e.target.value.toLowerCase()) &&
+        keyword.userId === session?.user?.id
     );
     setKeywords(userKeywords);
   };
@@ -96,8 +101,10 @@ export default function Passwords() {
     if (matchedKeyword) {
       matchedKeyword.timesCopied += 1;
     }
-    const userKeywords = keywords.filter((keyword) =>
-      keyword.keyword.toLowerCase().includes(searchInput.toLowerCase())
+    const userKeywords = keywords.filter(
+      (keyword) =>
+        keyword.keyword.toLowerCase().includes(searchInput.toLowerCase()) &&
+        keyword.userId === session?.user?.id
     );
     setKeywords(userKeywords);
     const modifiedKeywordsString = JSON.stringify(keywords);
@@ -109,12 +116,26 @@ export default function Passwords() {
     const retrievedKeywords = localStorage.getItem("keywords");
     const keywords: { userId: string; keyword: string; timesCopied: number }[] =
       retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
-    const userKeywords = keywords.filter((keyword) => keyword.keyword !== keyw);
-    localStorage.setItem("keywords", JSON.stringify(userKeywords));
+    const updatedKeywords = keywords.filter(
+      (keyword) =>
+        keyword.keyword !== keyw && session?.user?.id === keyword.userId
+    );
+    localStorage.setItem("keywords", JSON.stringify(updatedKeywords));
+    const userKeywords = updatedKeywords.filter(
+      (keyword) =>
+        keyword.keyword.toLowerCase().includes(searchInput.toLowerCase()) &&
+        keyword.userId === session?.user?.id
+    );
     setSearchInput("");
     setKeywords(userKeywords);
     // TODO: add notification
   };
+
+  useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session]);
 
   return (
     <motion.div
@@ -133,9 +154,19 @@ export default function Passwords() {
           onChange={handleSearch}
           className="rounded-lg pl-4 pr-12 py-3 text-black"
         />
-        <p className="hidden md:block text-center text-3xl">
-          {session?.user?.name}&apos;s passwords
-        </p>
+        {session ? (
+          <div className="text-center">
+            <button
+              className="text-custom-red border rounded px-2"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </button>
+            <p className="hidden md:block text-center text-2xl">
+              {session?.user?.name}&apos;s passwords
+            </p>
+          </div>
+        ) : null}
         <motion.button
           initial={{ scale: 1, opacity: 1 }}
           whileTap={{ scale: 1.05, opacity: 1 }}

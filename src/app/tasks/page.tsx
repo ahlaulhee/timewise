@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { inter, worksans } from "../fonts";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,6 +7,7 @@ import TaskModal from "@/components/TaskModal";
 import axios from "axios";
 import UpdateTaskModal from "@/components/UpdateTaskModal";
 import TaskItem from "@/components/TaskItem";
+import { useRouter } from "next/navigation";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<
@@ -64,6 +65,8 @@ export default function Tasks() {
     status: "loading" | "authenticated" | "unauthenticated";
   } = useSession();
 
+  const router = useRouter();
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     setFilteredTasks(
@@ -87,6 +90,12 @@ export default function Tasks() {
   };
 
   useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session]);
+
+  useEffect(() => {
     const fetchPosts = async () => {
       await axios
         .get(`/api/tasks/user/${session?.user?.id}`)
@@ -96,7 +105,7 @@ export default function Tasks() {
           setFilteredTasks(data.tasks);
         });
     };
-    fetchPosts();
+    if (session) fetchPosts();
   }, [modalOpen, updateModalOpen, session?.user?.id, refresh]);
 
   return (
@@ -115,9 +124,19 @@ export default function Tasks() {
           onChange={handleSearch}
           className="rounded-lg pl-4 pr-12 py-3 text-black"
         />
-        <p className="hidden md:block text-center text-3xl">
-          {session?.user?.name}&apos;s tasks
-        </p>
+        {session ? (
+          <div className="text-center">
+            <button
+              className="text-custom-red border rounded px-2"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </button>
+            <p className="hidden md:block text-center text-3xl">
+              {session?.user?.name}&apos;s tasks
+            </p>
+          </div>
+        ) : null}
         <motion.button
           initial={{ scale: 1, opacity: 1 }}
           whileTap={{ scale: 1.05, opacity: 1 }}

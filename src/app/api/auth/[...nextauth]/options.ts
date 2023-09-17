@@ -40,12 +40,11 @@ export const authOptions: NextAuthOptions = {
           });
           return newUser;
         } else {
-          if (
-            crypto.AES.encrypt(
-              credentials.password,
-              secretPassphrase
-            ).toString() === user.password
-          ) {
+          const decryptedPassword = crypto.AES.decrypt(
+            user.password,
+            secretPassphrase
+          ).toString(crypto.enc.Utf8);
+          if (credentials.password === decryptedPassword) {
             return user;
           } else {
             throw new Error("Incorrect password");
@@ -54,6 +53,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
   //   adapter,
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: any }) {
