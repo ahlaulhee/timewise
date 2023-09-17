@@ -96,7 +96,7 @@ function UpdateTaskModal({
         transition={{ duration: 0.7, ease: "anticipate" }}
         className={`${inter.className} w-fit fixed`}
       >
-        <div className="w-[500px] h-[470px] bg-[#171a26] rounded-[12px] shadow-lg flex flex-col justify-between p-3">
+        <div className="w-[500px] h-[470px] bg-foreground rounded-[12px] shadow-lg flex flex-col justify-between p-3 border-4 border-[#1f1e2c]">
           <div
             onPointerDown={(e) => {
               dragControls.start(e);
@@ -104,10 +104,12 @@ function UpdateTaskModal({
             className="flex justify-between items-center"
           >
             <div className="w-1/3"></div>
-            <p className="text-2xl font-bold w-1/3 text-center">Update Task</p>
+            <p className="text-2xl font-bold w-1/3 text-center text-main">
+              Update Task
+            </p>
             <div className="w-1/3 flex justify-end">
               <button
-                className="bg-red-500 hover:bg-red-700 duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
+                className="bg-dark-red hover:bg-maroon duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
                 onClick={() => {
                   setOpenModal(false);
                 }}
@@ -156,7 +158,7 @@ function UpdateTaskModal({
           </select>
           <div className="flex-1/5 flex justify-center items-center space-x-4">
             <button
-              className="w-full p-2 border-2 border-red-500 bg-red-700 text-white hover:bg-red-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
+              className="w-full p-2 border-2 border-maroon bg-dark-red text-white hover:bg-maroon hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
               onClick={() => {
                 setOpenModal(false);
               }}
@@ -165,7 +167,7 @@ function UpdateTaskModal({
             </button>
             <button
               onClick={handleSubmit}
-              className="w-full p-2 border-2 border-green-500 bg-green-700 text-white hover:bg-green-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
+              className="w-full p-2 border-2 border-forest-green bg-dark-green text-white hover:bg-forest-green hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
             >
               Update
             </button>

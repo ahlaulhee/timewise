@@ -18,15 +18,24 @@ interface UserData {
   };
 }
 
-const createPassword = (userId: string, keyword: string) => {
+const createPassword = (userId: string, keyword: string, type: string) => {
   // TODO: Add validations
   // TODO: Add password types (long, short, pin, etc)
   // TODO: Add notifications
   const retrievedKeywords = localStorage.getItem("keywords");
-  const keywords: { userId: string; keyword: string; timesCopied: number }[] =
-    retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+  const keywords: {
+    userId: string;
+    keyword: string;
+    type: string;
+    timesCopied: number;
+  }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
 
-  keywords.push({ userId: userId, keyword: keyword, timesCopied: 0 });
+  keywords.push({
+    userId: userId,
+    keyword: keyword,
+    type: type,
+    timesCopied: 0,
+  });
 
   localStorage.setItem("keywords", JSON.stringify(keywords));
 };
@@ -44,7 +53,7 @@ function PasswordModal({
 
   const [generatedPassword, setGeneratedPassword] = useState("...");
   const [keyword, setKeyword] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("long");
 
   const dragControls = useDragControls();
 
@@ -59,7 +68,8 @@ function PasswordModal({
       const genPass = generatePassword(
         session?.user?.name,
         session?.user?.password,
-        e.target.value
+        e.target.value,
+        type
       );
       if (genPass) {
         setGeneratedPassword(genPass);
@@ -75,6 +85,7 @@ function PasswordModal({
       const genPass = generatePassword(
         session?.user?.name,
         session?.user?.password,
+        keyword,
         e.target.value
       );
       if (genPass) {
@@ -86,7 +97,7 @@ function PasswordModal({
   };
 
   const handleSubmit = () => {
-    createPassword(session?.user?.id, keyword);
+    createPassword(session?.user?.id, keyword, type);
     setKeyword("");
     setGeneratedPassword("...");
     setOpenModal(false);
@@ -110,7 +121,7 @@ function PasswordModal({
         transition={{ duration: 0.7, ease: "anticipate" }}
         className={`${inter.className} w-fit fixed`}
       >
-        <div className="w-[500px] h-[450px] bg-gainsboro rounded-[12px] shadow-lg flex flex-col justify-between p-3 border-4 border-white-smoke">
+        <div className="w-[500px] h-[450px] bg-gainsboro rounded-[12px] shadow-lg flex flex-col justify-between p-3 border-4 border-[#1f1e2c]">
           <div
             onPointerDown={(e) => {
               dragControls.start(e);
@@ -123,7 +134,7 @@ function PasswordModal({
             </p>
             <div className="w-1/3 flex justify-end">
               <button
-                className="bg-red-500 hover:bg-red-700 duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
+                className="bg-dark-red hover:bg-maroon duration-200 px-4 py-2 rounded-full border-none text-base font-bold cursor-pointer"
                 onClick={() => {
                   setOpenModal(false);
                 }}
@@ -147,8 +158,8 @@ function PasswordModal({
             className="w-full rounded bg-main p-3 tracking-widest"
           />
           <select
-            name=""
-            id=""
+            name="type"
+            value={type}
             onChange={handleSelectChange}
             className="w-full rounded bg-main p-4 tracking-widest"
           >
@@ -159,7 +170,7 @@ function PasswordModal({
           </select>
           <div className="flex-1/5 flex justify-center items-center space-x-4">
             <button
-              className="w-full p-2 border-2 border-red-500 bg-red-700 text-white hover:bg-red-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
+              className="w-full p-2 border-2 border-maroon bg-dark-red text-white hover:bg-maroon hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
               onClick={() => {
                 setOpenModal(false);
               }}
@@ -168,7 +179,7 @@ function PasswordModal({
             </button>
             <button
               onClick={handleSubmit}
-              className="w-full p-2 border-2 border-green-500 bg-green-700 text-white hover:bg-green-500 hover:text-black hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
+              className="w-full p-2 border-2 border-forest-green bg-dark-green text-white hover:bg-forest-green hover:tracking-wide duration-200 rounded-[8px] text-[20px] cursor-pointer"
             >
               Create
             </button>
