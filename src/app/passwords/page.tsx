@@ -7,63 +7,15 @@ import { signOut, useSession } from "next-auth/react";
 import { generatePassword } from "@/utils/generatePassword";
 import PasswordModal from "@/components/PasswordModal";
 import { useRouter } from "next/navigation";
+import PasswordItem from "@/components/PasswordItem";
 
-import Swal from "sweetalert2";
-// import "@sweetalert2/theme-dark/dark.css";
 import { Toast } from "@/utils/Toast";
-
-const PasswordItem = ({
-  keyword,
-  timesCopied,
-  genPassword,
-  type,
-  handleCopy,
-  handleDelete,
-}: {
-  keyword: string;
-  timesCopied: number;
-  genPassword: string | undefined;
-  type: string;
-  handleCopy: (keyword: string, genPassword: string) => void;
-  handleDelete: (keyword: string, type: string) => void;
-}) => {
-  return (
-    <motion.div
-      initial={{ scale: 0, opacity: 0 }}
-      whileInView={{ scale: 1, opacity: 1 }}
-      transition={{ type: "spring", duration: 0.8 }}
-      exit={{ opacity: 0 }}
-      viewport={{ once: true }}
-      className={`${worksans.className} flex justify-evenly m-4 p-4 bg-main rounded-lg`}
-    >
-      <p className="w-1/3 font-bold">
-        {timesCopied} | {keyword} | {type.toUpperCase()}
-      </p>
-      <p className="w-1/3 flex justify-center">{genPassword}</p>
-      <div className="w-1/3 space-x-4 flex justify-end">
-        <button
-          className="hover:underline active:text-teal duration-100"
-          onClick={() => handleCopy(keyword, genPassword ? genPassword : "")}
-        >
-          Copy
-        </button>
-        <button
-          className="hover:underline active:text-maroon duration-100"
-          onClick={() => handleDelete(keyword, type)}
-        >
-          Delete
-        </button>
-      </div>
-    </motion.div>
-  );
-};
+import { type Keyword } from "@/utils/types";
 
 export default function Passwords() {
   const [modalOpen, setModalOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [keywords, setKeywords] = useState<
-    { userId: string; keyword: string; type: string; timesCopied: number }[]
-  >([]);
+  const [keywords, setKeywords] = useState<Keyword[]>([]);
   const {
     data: session,
     status,
@@ -74,14 +26,13 @@ export default function Passwords() {
 
   const router = useRouter();
 
-  useEffect(() => {
+  const getKeywords = () => {
     const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: {
-      userId: string;
-      keyword: string;
-      type: string;
-      timesCopied: number;
-    }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+    return retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+  };
+
+  useEffect(() => {
+    const keywords: Keyword[] = getKeywords();
     const userKeywords = keywords.filter(
       (keyword) => keyword.userId === session?.user?.id
     );
@@ -90,13 +41,7 @@ export default function Passwords() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-    const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: {
-      userId: string;
-      keyword: string;
-      type: string;
-      timesCopied: number;
-    }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+    const keywords: Keyword[] = getKeywords();
     const userKeywords = keywords.filter(
       (keyword) =>
         keyword.keyword.toLowerCase().includes(e.target.value.toLowerCase()) &&
@@ -107,14 +52,7 @@ export default function Passwords() {
 
   const handleCopy = (keyw: string, pass: string) => {
     navigator.clipboard.writeText(pass);
-    const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: {
-      userId: string;
-      keyword: string;
-      type: string;
-      timesCopied: number;
-    }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
-
+    const keywords: Keyword[] = getKeywords();
     const matchedKeyword = keywords.find((kw) => kw.keyword === keyw);
     if (matchedKeyword) {
       matchedKeyword.timesCopied += 1;
@@ -134,14 +72,7 @@ export default function Passwords() {
   };
 
   const handleDelete = (keyw: string, type: string) => {
-    const retrievedKeywords = localStorage.getItem("keywords");
-    const keywords: {
-      userId: string;
-      keyword: string;
-      type: string;
-      timesCopied: number;
-    }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
-    console.log(type);
+    const keywords: Keyword[] = getKeywords();
     const updatedKeywords = keywords.filter(
       (keyword) =>
         // keyword.keyword !== keyw

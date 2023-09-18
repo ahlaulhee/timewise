@@ -5,22 +5,14 @@ import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { type TaskData, type Task } from "@/utils/types";
 
 function UpdateTaskModal({
   setOpenModal,
   editableTask,
 }: {
   setOpenModal: (arg0: boolean) => void;
-  editableTask: {
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    timeSpent: string;
-    createdAt: Date;
-    updateAt: Date;
-    userId: string;
-  };
+  editableTask: Task;
 }) {
   const {
     data: session,
@@ -28,13 +20,7 @@ function UpdateTaskModal({
   }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
     useSession();
 
-  const [taskData, setTaskData] = useState<{
-    title: string;
-    description: string;
-    status: string;
-    timespent: string;
-    userId: string;
-  }>({
+  const [taskData, setTaskData] = useState<TaskData>({
     title: "",
     description: "",
     status: "",

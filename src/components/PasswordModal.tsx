@@ -5,30 +5,15 @@ import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { generatePassword } from "@/utils/generatePassword";
 import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
-
-interface UserData {
-  expires: Date;
-  user: {
-    id?: string | null;
-    name?: string | null;
-    password?: string | null;
-    email?: string | null;
-    image?: string | null;
-  };
-}
+import { type Keyword } from "@/utils/types";
 
 const createPassword = (userId: string, keyword: string, type: string) => {
   // TODO: Add validations
-  // TODO: Add password types (long, short, pin, etc)
   // TODO: Add notifications
   const retrievedKeywords = localStorage.getItem("keywords");
-  const keywords: {
-    userId: string;
-    keyword: string;
-    type: string;
-    timesCopied: number;
-  }[] = retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
+  const keywords: Keyword[] = retrievedKeywords
+    ? JSON.parse(retrievedKeywords)
+    : [];
 
   keywords.push({
     userId: userId,
@@ -144,7 +129,6 @@ function PasswordModal({
             </div>
           </div>
           <div className="text-center flex flex-col justify-center items-center">
-            {/* <h1 className="text-2xl">Create a new Password!</h1> */}
             <p className="bg-main py-2 px-8 w-fit border-2 rounded-full text-xl shadow-lg">
               {generatedPassword}
             </p>

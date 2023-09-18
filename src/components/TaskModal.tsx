@@ -5,6 +5,7 @@ import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { type TaskData } from "@/utils/types";
 
 function TaskModal({
   setOpenModal,
@@ -17,11 +18,7 @@ function TaskModal({
   }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
     useSession();
 
-  const [taskData, setTaskData] = useState<{
-    title: string;
-    description: string;
-    status: string;
-  }>({
+  const [taskData, setTaskData] = useState<TaskData>({
     title: "",
     description: "",
     status: "TODO",

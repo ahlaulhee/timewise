@@ -1,6 +1,6 @@
 "use client";
 import { signOut, useSession } from "next-auth/react";
-import { inter, worksans } from "../fonts";
+import { inter } from "../fonts";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import TaskModal from "@/components/TaskModal";
@@ -9,55 +9,24 @@ import UpdateTaskModal from "@/components/UpdateTaskModal";
 import TaskItem from "@/components/TaskItem";
 import { useRouter } from "next/navigation";
 
-import Swal from "sweetalert2";
+import useSWR from "swr";
 import { CustomAlert } from "@/utils/Toast";
-// import "@sweetalert2/theme-dark/dark.css";
+import { type Task } from "@/utils/types";
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<
-    {
-      id: number;
-      title: string;
-      description: string;
-      status: string;
-      timeSpent: string;
-      createdAt: Date;
-      updatedAt: Date;
-      userId: string;
-    }[]
-  >();
-  const [filteredTasks, setFilteredTasks] = useState<
-    {
-      id: number;
-      title: string;
-      description: string;
-      status: string;
-      timeSpent: string;
-      createdAt: Date;
-      updatedAt: Date;
-      userId: string;
-    }[]
-  >();
+  const [tasks, setTasks] = useState<Task[]>();
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>();
   const [searchInput, setSearchInput] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(true);
-  const [editableTask, setEditableTask] = useState<{
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    timeSpent: string;
-    createdAt: Date;
-    updateAt: Date;
-    userId: string;
-  }>({
+  const [editableTask, setEditableTask] = useState<Task>({
     id: 0,
     title: "",
     description: "",
     status: "",
     timeSpent: "",
     createdAt: new Date(Date.now()),
-    updateAt: new Date(Date.now()),
+    updatedAt: new Date(Date.now()),
     userId: "",
   });
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
