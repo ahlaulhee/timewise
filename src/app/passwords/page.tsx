@@ -1,21 +1,18 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { inter, worksans } from "../fonts";
+import { useEffect } from "react";
+import { inter } from "../fonts";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 import { generatePassword } from "@/utils/generatePassword";
 import PasswordModal from "@/components/PasswordModal";
-import { useRouter } from "next/navigation";
 import PasswordItem from "@/components/PasswordItem";
 
-import { Toast } from "@/utils/Toast";
-import { type Keyword } from "@/utils/types";
+import useKeywordManagement from "@/hooks/useKeywords";
 
 export default function Passwords() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
-  const [keywords, setKeywords] = useState<Keyword[]>([]);
   const {
     data: session,
     status,
@@ -24,74 +21,17 @@ export default function Passwords() {
     status: "loading" | "authenticated" | "unauthenticated";
   } = useSession();
 
+  const {
+    searchInput,
+    keywords,
+    handleSearch,
+    handleCopy,
+    handleDelete,
+    modalOpen,
+    setModalOpen,
+  } = useKeywordManagement(session);
+
   const router = useRouter();
-
-  const getKeywords = () => {
-    const retrievedKeywords = localStorage.getItem("keywords");
-    return retrievedKeywords ? JSON.parse(retrievedKeywords) : [];
-  };
-
-  useEffect(() => {
-    const keywords: Keyword[] = getKeywords();
-    const userKeywords = keywords.filter(
-      (keyword) => keyword.userId === session?.user?.id
-    );
-    setKeywords(userKeywords);
-  }, [session?.user?.id, modalOpen]);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-    const keywords: Keyword[] = getKeywords();
-    const userKeywords = keywords.filter(
-      (keyword) =>
-        keyword.keyword.toLowerCase().includes(e.target.value.toLowerCase()) &&
-        keyword.userId === session?.user?.id
-    );
-    setKeywords(userKeywords);
-  };
-
-  const handleCopy = (keyw: string, pass: string) => {
-    navigator.clipboard.writeText(pass);
-    const keywords: Keyword[] = getKeywords();
-    const matchedKeyword = keywords.find((kw) => kw.keyword === keyw);
-    if (matchedKeyword) {
-      matchedKeyword.timesCopied += 1;
-    }
-    const userKeywords = keywords.filter(
-      (keyword) =>
-        keyword.keyword.toLowerCase().includes(searchInput.toLowerCase()) &&
-        keyword.userId === session?.user?.id
-    );
-    setKeywords(userKeywords);
-    const modifiedKeywordsString = JSON.stringify(keywords);
-    localStorage.setItem("keywords", modifiedKeywordsString);
-    Toast.fire({
-      icon: "info",
-      title: `The password for ${keyw} has been copied.`,
-    });
-  };
-
-  const handleDelete = (keyw: string, type: string) => {
-    const keywords: Keyword[] = getKeywords();
-    const updatedKeywords = keywords.filter(
-      (keyword) =>
-        // keyword.keyword !== keyw
-        !(keyword.keyword === keyw && keyword.type === type)
-      // && session?.user?.id === keyword.userId
-    );
-    localStorage.setItem("keywords", JSON.stringify(updatedKeywords));
-    const userKeywords = updatedKeywords.filter(
-      (keyword) =>
-        keyword.keyword.toLowerCase().includes(searchInput.toLowerCase()) &&
-        keyword.userId === session?.user?.id
-    );
-    setSearchInput("");
-    setKeywords(userKeywords);
-    Toast.fire({
-      icon: "success",
-      title: `The password for ${keyw} was deleted successfully.`,
-    });
-  };
 
   useEffect(() => {
     if (!session) {

@@ -1,29 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion, useDragControls } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { inter } from "@/app/fonts";
 import { generatePassword } from "@/utils/generatePassword";
-import { useSession } from "next-auth/react";
-import { type Keyword } from "@/utils/types";
-
-const createPassword = (userId: string, keyword: string, type: string) => {
-  // TODO: Add validations
-  // TODO: Add notifications
-  const retrievedKeywords = localStorage.getItem("keywords");
-  const keywords: Keyword[] = retrievedKeywords
-    ? JSON.parse(retrievedKeywords)
-    : [];
-
-  keywords.push({
-    userId: userId,
-    keyword: keyword,
-    type: type,
-    timesCopied: 0,
-  });
-
-  localStorage.setItem("keywords", JSON.stringify(keywords));
-};
+import useCreatePassword from "@/hooks/useCreatePassword";
 
 function PasswordModal({
   setOpenModal,
@@ -36,9 +18,15 @@ function PasswordModal({
   }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
     useSession();
 
-  const [generatedPassword, setGeneratedPassword] = useState("...");
-  const [keyword, setKeyword] = useState("");
-  const [type, setType] = useState("long");
+  const {
+    generatedPassword,
+    setGeneratedPassword,
+    keyword,
+    setKeyword,
+    type,
+    setType,
+    createPassword,
+  } = useCreatePassword();
 
   const dragControls = useDragControls();
 
