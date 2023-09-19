@@ -9,16 +9,15 @@ import UpdateTaskModal from "@/components/UpdateTaskModal";
 import TaskItem from "@/components/TaskItem";
 import { useRouter } from "next/navigation";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { CustomAlert } from "@/utils/Toast";
 import { type Task } from "@/utils/types";
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<Task[]>();
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>();
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [refresh, setRefresh] = useState(true);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [editableTask, setEditableTask] = useState<Task>({
     id: 0,
     title: "",
@@ -29,7 +28,6 @@ export default function Tasks() {
     updatedAt: new Date(Date.now()),
     userId: "",
   });
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const {
     data: session,
     status,
@@ -38,16 +36,31 @@ export default function Tasks() {
     status: "loading" | "authenticated" | "unauthenticated";
   } = useSession();
 
+  const {
+    data: tasks,
+    error: taskError,
+    isLoading,
+  } = useSWR(`/api/tasks/user`, () =>
+    axios.get(`/api/tasks/user/${session?.user?.id}`).then((res) => res.data)
+  );
+
+  if (!isLoading) {
+    console.log(tasks);
+    // setFilteredTasks(tasks.tasks);
+  }
+
   const router = useRouter();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-    setFilteredTasks(
-      tasks?.filter((task) =>
-        task.title.toLowerCase().includes(e.target.value.toLowerCase())
-      )
-    );
+    // if (tasks) {
+    //   const filtered = tasks?.tasks.filter((task: Task) =>
+    //     task.title.toLowerCase().includes(e.target.value.toLowerCase())
+    //   );
+    //   setFilteredTasks(filtered);
+    // }
   };
+
   const handleEdit = async (id: number) => {
     await axios
       .get(`/api/tasks/${id}`)
@@ -55,6 +68,7 @@ export default function Tasks() {
       .then((data) => setEditableTask(data.storedTask))
       .finally(() => setUpdateModalOpen(true));
   };
+
   const handleDelete = (id: number) => {
     CustomAlert.fire({
       title: "Are you sure you want to delete this task?",
@@ -66,7 +80,7 @@ export default function Tasks() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         await axios.delete(`/api/tasks/${id}`).then(() => {
-          setRefresh(!refresh);
+          mutate("/api/tasks/user");
           setSearchInput("");
         });
         CustomAlert.fire({
@@ -83,26 +97,6 @@ export default function Tasks() {
       router.push("/login");
     }
   }, [session, router]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      await axios
-        .get(`/api/tasks/user/${session?.user?.id}`)
-        .then((res) => {
-          return res.data;
-        })
-        .then((data) => {
-          setTasks(data.tasks);
-          setFilteredTasks(data.tasks);
-        })
-        .catch((err) => {
-          setTasks([]);
-          setFilteredTasks([]);
-          console.log(err);
-        });
-    };
-    if (session) fetchPosts();
-  }, [modalOpen, updateModalOpen, session?.user?.id, refresh, session]);
 
   return (
     <motion.div
@@ -158,21 +152,23 @@ export default function Tasks() {
       </AnimatePresence>
       <div className="max-w-screen-xl mx-auto h-fit rounded-lg bg-foreground m-3 py-1">
         <AnimatePresence>
-          {filteredTasks &&
-            filteredTasks
-              .sort((a, b) => b.id - a.id)
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  status={task.status}
-                  description={task.description}
-                  timespent={task.timeSpent}
-                  handleEdit={handleEdit}
-                  handleDelete={handleDelete}
-                />
-              ))}
+          {tasks?.tasks
+            .filter((task: Task) =>
+              task.title.toLowerCase().includes(searchInput.toLowerCase())
+            )
+            .sort((a: Task, b: Task) => b.id - a.id)
+            .map((task: Task) => (
+              <TaskItem
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                status={task.status}
+                description={task.description}
+                timespent={task.timeSpent}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
+            ))}
         </AnimatePresence>
       </div>
     </motion.div>

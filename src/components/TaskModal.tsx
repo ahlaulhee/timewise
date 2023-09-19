@@ -6,6 +6,7 @@ import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { type TaskData } from "@/utils/types";
+import { mutate } from "swr";
 
 function TaskModal({
   setOpenModal,
@@ -46,6 +47,7 @@ function TaskModal({
       userId: session.user.id,
     };
     await axios.post("/api/tasks", data);
+    mutate("/api/tasks/user");
     setOpenModal(false);
     setTaskData({
       title: "",
