@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
-import { useSession } from "next-auth/react";
-import axios from "axios";
-import { type TaskData, type Task } from "@/utils/types";
-import { mutate } from "swr";
+import useUpdateTask from "@/hooks/useUpdateTask";
+import { type Task } from "@/utils/types";
 
 function UpdateTaskModal({
   setOpenModal,
@@ -15,31 +13,15 @@ function UpdateTaskModal({
   setOpenModal: (arg0: boolean) => void;
   editableTask: Task;
 }) {
-  const {
-    data: session,
-    status,
-  }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
-    useSession();
+  // const {
+  //   data: session,
+  //   status,
+  // }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
+  //   useSession();
 
-  const [taskData, setTaskData] = useState<TaskData>({
-    title: "",
-    description: "",
-    status: "",
-    timespent: "",
-    userId: "",
-  });
+  const { taskData, setTaskData, updateTask } = useUpdateTask(editableTask);
 
   const dragControls = useDragControls();
-
-  useEffect(() => {
-    setTaskData({
-      title: editableTask?.title,
-      description: editableTask?.description,
-      status: editableTask?.status,
-      timespent: editableTask?.timeSpent,
-      userId: editableTask?.userId,
-    });
-  }, [editableTask]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -54,17 +36,8 @@ function UpdateTaskModal({
   const handleSubmit = async () => {
     // TODO: Add validations
     // TODO: Add notifications
-    await axios.put(`/api/tasks/${editableTask.id}`, taskData).finally(() => {
-      mutate("/api/tasks/user");
-    });
+    updateTask();
     setOpenModal(false);
-    setTaskData({
-      title: "",
-      description: "",
-      status: "",
-      timespent: "",
-      userId: "",
-    });
   };
 
   return (

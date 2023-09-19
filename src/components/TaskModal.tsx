@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion, useDragControls } from "framer-motion";
 import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
-import axios from "axios";
-import { type TaskData } from "@/utils/types";
-import { mutate } from "swr";
+import useCreateTask from "@/hooks/useCreateTask";
 
 function TaskModal({
   setOpenModal,
@@ -19,11 +17,7 @@ function TaskModal({
   }: { data: any; status: "loading" | "authenticated" | "unauthenticated" } =
     useSession();
 
-  const [taskData, setTaskData] = useState<TaskData>({
-    title: "",
-    description: "",
-    status: "TODO",
-  });
+  const { taskData, setTaskData, createTask } = useCreateTask(session.user.id);
 
   const dragControls = useDragControls();
 
@@ -40,20 +34,8 @@ function TaskModal({
   const handleSubmit = async () => {
     // TODO: Add validations
     // TODO: Add notifications
-    const data = {
-      title: taskData.title,
-      description: taskData.description,
-      status: taskData.status,
-      userId: session.user.id,
-    };
-    await axios.post("/api/tasks", data);
-    mutate("/api/tasks/user");
+    createTask();
     setOpenModal(false);
-    setTaskData({
-      title: "",
-      description: "",
-      status: taskData.status,
-    });
   };
 
   return (

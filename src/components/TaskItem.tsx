@@ -1,8 +1,8 @@
 "use client";
 import { worksans } from "@/app/fonts";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import useTimer from "@/hooks/useTimer";
 
 const TaskItem = ({
   id,
@@ -23,30 +23,7 @@ const TaskItem = ({
 }) => {
   const [hours, minutes, seconds] = timespent.split(":");
   const totalSeconds = +hours * 3600 + +minutes * 60 + +seconds;
-  const [time, setTime] = useState(totalSeconds);
-  const [timer, setTimer] = useState(false);
-
-  useEffect(() => {
-    setTime(totalSeconds);
-  }, [totalSeconds]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (timer) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-    } else if (!timer && time !== 0) {
-      if (interval) {
-        clearInterval(interval);
-      }
-    }
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [timer, time]);
+  const { time, timer, start, stop } = useTimer(totalSeconds);
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -61,7 +38,7 @@ const TaskItem = ({
   };
 
   const startTimer = () => {
-    setTimer(true);
+    start();
   };
 
   const stopTimer = async () => {
@@ -72,7 +49,7 @@ const TaskItem = ({
       status,
       timespent: spentTime,
     });
-    setTimer(false);
+    stop();
   };
 
   return (
