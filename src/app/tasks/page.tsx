@@ -14,7 +14,6 @@ import { CustomAlert } from "@/utils/Toast";
 import { type Task } from "@/utils/types";
 
 export default function Tasks() {
-  const [filteredTasks, setFilteredTasks] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
@@ -46,19 +45,12 @@ export default function Tasks() {
 
   if (!isLoading) {
     console.log(tasks);
-    // setFilteredTasks(tasks.tasks);
   }
 
   const router = useRouter();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-    // if (tasks) {
-    //   const filtered = tasks?.tasks.filter((task: Task) =>
-    //     task.title.toLowerCase().includes(e.target.value.toLowerCase())
-    //   );
-    //   setFilteredTasks(filtered);
-    // }
   };
 
   const handleEdit = async (id: number) => {

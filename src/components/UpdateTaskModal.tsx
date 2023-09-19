@@ -6,6 +6,7 @@ import { inter } from "@/app/fonts";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { type TaskData, type Task } from "@/utils/types";
+import { mutate } from "swr";
 
 function UpdateTaskModal({
   setOpenModal,
@@ -53,7 +54,9 @@ function UpdateTaskModal({
   const handleSubmit = async () => {
     // TODO: Add validations
     // TODO: Add notifications
-    await axios.put(`/api/tasks/${editableTask.id}`, taskData);
+    await axios.put(`/api/tasks/${editableTask.id}`, taskData).finally(() => {
+      mutate("/api/tasks/user");
+    });
     setOpenModal(false);
     setTaskData({
       title: "",
